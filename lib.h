@@ -17,19 +17,20 @@ int choose_port(int port1, int port2){
 	global_port_recv = port2;
 }
 
-int SEND(int s, const void *buf, int len, int flags){
+/* Send funtion to tcpd currently onlu used by client*/
+int SEND(int sock, const void *buf, size_t len, int flags){
 	struct sockaddr_in tcpd;
 	tcpd.sin_family = AF_INET;
 	tcpd.sin_port = htons(global_port_send);
 	tcpd.sin_addr.s_addr = inet_addr("127.0.0.1");
 	// either "buf" or "&buf" or "*buf"
-	if(sendto(s, buf, len, flags, (struct sockaddr *)&tcpd, sizeof(tcpd)) < 0) {
+	if(sendto(sock, buf, len, flags, (struct sockaddr *)&tcpd, sizeof(tcpd)) < 0) {
         perror("Error sending datagram message");
         exit(1);
     }
 }
 
-int RECV(int s, void *buf, int len, int flags){
+int RECV(int s, void *buf, size_t len, int flags){
 	struct sockaddr_in tcpd;
 	socklen_t fromlen;
 	char ipstr[INET6_ADDRSTRLEN];
@@ -47,12 +48,10 @@ int RECV(int s, void *buf, int len, int flags){
 }
 
 int ACCEPT(int s, const void *buf, int len){
-	return 1;
 }
 
 
 int CONNECT(int s, const void *buf, int len){
-	return 1;
 }
 
 #endif

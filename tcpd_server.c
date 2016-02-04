@@ -36,7 +36,7 @@ main(int argc, char const *argv[])
     printf("Setting up socket...\n");
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-    	perror("Error openting datagram socket");
+    	perror("Error opening datagram socket");
     	exit(1);
     }
     printf("Socket initialized \n");
@@ -68,11 +68,11 @@ main(int argc, char const *argv[])
 	//To hold the port number sent by ftps
 	char port[4];
 
-	if ((server_sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+	/*if ((server_sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
     	perror("Error openting datagram socket");
     	exit(1);
-    }
+    } */
 
 	//Always keep on listening
 	while(1) {
@@ -98,15 +98,15 @@ main(int argc, char const *argv[])
 
 		//Counter to count number of datagrams forwarded
 		int count = 0;
-		uint32_t no = htonl(45);
-		hp = gethostbyname("localhost");
+		//uint32_t no = htonl(45);
+		/*hp = gethostbyname("localhost");
 	    if(hp == 0) {
 		fprintf(stderr, "%s:unknown host\n", argv[1]);
 		exit(3);
 	    }
 	    bcopy((char *)hp->h_addr, (char *)&server_addr.sin_addr, hp->h_length);
+		*/
 
-		
 		//Always keep on listening and sending
 		while(1) {
 
@@ -117,25 +117,9 @@ main(int argc, char const *argv[])
 				perror("Error receiving datagram");
 				exit(1);
 			}
-			
-			////Sending to ftps
-			memcpy(&size,message.body,sizeof(size));
-    		printf("Receiving file of size: %d\n", size);
-			int s;
-			if (count == 0){
 
-				s = sendto(server_sock,&size, sizeof(size) ,0, (struct sockaddr *)&server_addr, sizeof(server_addr));
-			}
-			else if (count == 1){
-				char buf[20];
-				memcpy(buf, message.body, 20);
-				printf("%s\n", buf);
-				s = sendto(server_sock,&buf, sizeof(buf) ,0, (struct sockaddr *)&server_addr, sizeof(server_addr));
-			}
-			else{
-				s = sendto(server_sock,&message.body, sizeof(message.body) ,0, (struct sockaddr *)&server_addr, sizeof(server_addr));
-			}
-			
+			////Sending to ftps
+			int s = sendto(server_sock,message.body,sizeof(message.body),0, (struct sockaddr *)&server_addr, sizeof(server_addr));
 
 	        if (s < 0)
 	        {
@@ -147,6 +131,7 @@ main(int argc, char const *argv[])
 
 	        //Incrementing counter
 	        count++;
+
 
 		}
 	}

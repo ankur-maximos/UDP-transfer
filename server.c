@@ -56,9 +56,9 @@ main(int argc, char const *argv[])
     }
     printf("Socket name binded...\n");
 
-    printf("Registering with TCPD...\n");
+    printf("Register with TCPD...\n");
 
-    //Registering with TCPD and sending port number for receiving datagrams
+    //Register with TCPD and sending port number for receiving datagrams
     if(SEND(tcpd_sock,argv[1],sizeof(argv[1]),0) < 0){
         perror("Error sending datagram message");
         exit(1);
@@ -76,17 +76,17 @@ main(int argc, char const *argv[])
     int size;
 
     //Reading datagram to get the file size
-    uint32_t size_temp= 0;
+    //uint32_t size_temp = 0;
     int fromlen = sizeof(my_addr);
     
-    if(RECV(tcpd_sock, &size_temp, sizeof(size_temp), 0) < 0){
+    if(RECV(sock, buff, 4, 0) < 0){
         perror("Error receiving datagram");
         exit(1);
     }
     
     //Copying the data into size variable
     memcpy(&size,buff,sizeof(size));
-    size = size_temp;
+    //size = size_temp;
     printf("Receiving file of size: %d\n", size);
     
     //Setting the bytes used in buffer back to zero

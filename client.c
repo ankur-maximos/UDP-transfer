@@ -64,7 +64,6 @@ main(int argc, char const *argv[])
     server_add.sin_addr.s_addr = inet_addr(argv[1]);
 
     //Constructing socket name of the TCPD to send to
-    
 
     printf("Sending packets to TCPD...\n");
 
@@ -83,6 +82,7 @@ main(int argc, char const *argv[])
 
     //Reinitialize the buffer to zero
     bzero(message.body,sizeof(size));
+    //memset(message.body);
 
     //Copy the name of file into buffer for sending
     memcpy(message.body,argv[3],20);
@@ -130,7 +130,7 @@ main(int argc, char const *argv[])
         if((size-sent)<sent_size){
             sent_size = size - sent;
         }
-        printf("Sent.. %d\n",(sent*100)/size);
+        printf("Sent.. %d\n",sent);
 
         //Change buffer to zero
         bzero(message.body,1000);
