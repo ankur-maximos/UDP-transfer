@@ -1,6 +1,7 @@
-//tcpd.c file for homework 2 - file transfer application using UDP sockets
-
-//TCPS is accepting datagrams from ftpc and sending to Troll
+/* 
+  tcpd_client.c file for file transfer application using UDP sockets
+  tcpd_client.c is accepting datagrams from ftpc and sending to Troll
+*/
 
 #include <sys/types.h>
 #include <sys/socket.h>

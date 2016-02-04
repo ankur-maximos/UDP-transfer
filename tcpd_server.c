@@ -131,8 +131,7 @@ main(int argc, char const *argv[])
 
 	        //Incrementing counter
 	        count++;
-
-
+	        
 		}
 	}
 

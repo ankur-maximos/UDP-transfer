@@ -20,10 +20,10 @@ typedef struct MyMessage {
 
 main(int argc, char const *argv[])
 {
-    MyMessage message;                                 //Packet format accepted by troll
-    int sock;                                          //Initial socket descriptor
-    struct sockaddr_in server_add, tcpd;               //Structures for server and tcpd socket name setup
-    int size;                                          //Storing the size of file
+    MyMessage message;                                 // Packet format accepted by troll
+    int sock;                                          // Initial socket descriptor
+    struct sockaddr_in server_add, tcpd;               // Structures for server and tcpd socket name setup
+    int size;                                          // Storing the size of file
 
     //If there are more or less than 5 arguments show error
     //First argument: exec file         Second argument: server IP 
@@ -52,7 +52,7 @@ main(int argc, char const *argv[])
     printf("Setting up socket...\n");
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
-        perror("Error openting datagram socket");
+        perror("Error opening datagram socket");
         exit(1);
     }
     printf("Socket initialized \n");
@@ -130,7 +130,7 @@ main(int argc, char const *argv[])
         if((size-sent)<sent_size){
             sent_size = size - sent;
         }
-        printf("Sent.. %d\n",sent);
+        printf("Sent.. %d\n",(sent*100)/size);
 
         //Change buffer to zero
         bzero(message.body,1000);
