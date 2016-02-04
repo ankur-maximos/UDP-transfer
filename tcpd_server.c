@@ -103,7 +103,8 @@ main(int argc, char const *argv[])
 			}
 
 			////Sending to ftps
-			int s = sendto(server_sock,message.body,sizeof(message.body),0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+			printf("%d\n", message.body);
+			int s = sendto(server_sock,&message.body,sizeof(message.body),0, (struct sockaddr *)&server_addr, sizeof(server_addr));
 
 	        if (s < 0)
 	        {

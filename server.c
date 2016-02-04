@@ -10,6 +10,7 @@
 #include <string.h>
 #include <strings.h>
 #include <stdlib.h>
+#include "lib.h"
 
 main(int argc, char const *argv[])
 {
@@ -43,9 +44,8 @@ main(int argc, char const *argv[])
     my_addr.sin_port = htons(atoi(argv[1]));
 
     //Constructing socket name of the TCPD to send to
-    tcpd.sin_family = AF_INET;
-    tcpd.sin_port = htons(atoi(argv[2]));
-    tcpd.sin_addr.s_addr = inet_addr("127.0.0.1");
+    choose_port(atoi(argv[2]));
+    
 
     //Binding socket name to socket
     printf("Binding socket to socket name...\n");
@@ -59,7 +59,7 @@ main(int argc, char const *argv[])
     printf("Registering with TCPD...\n");
 
     //Registering with TCPD and sending port number for receiving datagrams
-    if(sendto(tcpd_sock,argv[1],sizeof(argv[1]),0, (struct sockaddr *)&tcpd, sizeof(tcpd)) < 0) {
+    if(SEND(tcpd_sock,argv[1],sizeof(argv[1]),0) < 0){
         perror("Error sending datagram message");
         exit(1);
     }
@@ -76,11 +76,11 @@ main(int argc, char const *argv[])
     int size;
 
     //Reading datagram to get the file size
-    if(recvfrom(sock, buff, 4, 0, (struct sockaddr *)&my_addr, &len)< 0) {
+    if(RECV(sock, buff, 4, 0) < 0){
         perror("Error receiving datagram");
         exit(1);
     }
-
+    
     //Copying the data into size variable
     memcpy(&size,buff,sizeof(size));
     printf("Receiving file of size: %d\n", size);
@@ -92,7 +92,7 @@ main(int argc, char const *argv[])
     char name[20];
 
     //Reading next datagram to get the name of the file
-    if(recvfrom(sock, buff, 20, 0, (struct sockaddr *)&my_addr, &len)< 0) {
+    if(RECV(sock, buff, 20, 0)< 0) {
         perror("Error receiving datagram");
         exit(1);
     }
@@ -123,7 +123,7 @@ main(int argc, char const *argv[])
     while(received<size){
 
         //Receiving from TCPD
-        int rec = recvfrom(sock, buff, rec_size, 0, (struct sockaddr *)&my_addr, &len);
+        int rec = RECV(sock, buff, rec_size, 0);
 
         if(rec<0){
             perror("Error receiving file");

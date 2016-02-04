@@ -3,8 +3,8 @@
 CC = gcc
 OBJCLI = client.c 
 OBJSRV = server.c
-OBJCLIT = tcpd_server.c
-OBJSRVT = tcpd_client.c
+OBJCLIT = tcpd_client.c
+OBJSRVT = tcpd_server.c
 CFLAGS = 
 # setup for system
 LIBS =

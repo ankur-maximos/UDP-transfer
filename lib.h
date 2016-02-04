@@ -9,12 +9,16 @@
 #include <string.h>
 #include <strings.h>
 #include <stdlib.h>
-#define LOCAL_TCPD_PORT 2090
+
+int global_port = 0;
+int choose_port(int port){
+	global_port = port;
+}
 
 int SEND(int s, const void *buf, int len, int flags){
 	struct sockaddr_in tcpd;
 	tcpd.sin_family = AF_INET;
-	tcpd.sin_port = htons(LOCAL_TCPD_PORT);
+	tcpd.sin_port = htons(global_port);
 	tcpd.sin_addr.s_addr = inet_addr("127.0.0.1");
 	// either "buf" or "&buf" or "*buf"
 	if(sendto(s, buf, len, flags, (struct sockaddr *)&tcpd, sizeof(tcpd)) < 0) {
@@ -28,7 +32,7 @@ int RECV(int s, void *buf, int len, int flags){
 	socklen_t fromlen;
 	char ipstr[INET6_ADDRSTRLEN];
 	tcpd.sin_family = AF_INET;
-	tcpd.sin_port = htons(LOCAL_TCPD_PORT);
+	tcpd.sin_port = htons(global_port);
 	tcpd.sin_addr.s_addr = inet_addr("127.0.0.1");
 	struct sockaddr_in addr;
 	// either "buf" or "&buf" or "*buf"

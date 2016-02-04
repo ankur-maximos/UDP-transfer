@@ -10,6 +10,7 @@
 #include <string.h>
 #include <strings.h>
 #include <stdlib.h>
+#include "lib.h"
 
 //Structure used by troll
 typedef struct MyMessage {
@@ -57,14 +58,13 @@ main(int argc, char const *argv[])
     printf("Socket initialized \n");
 
     //Constructing socket name of the server to send to
+    choose_port(atoi(argv[4]));
     server_add.sin_family = htons(AF_INET);
     server_add.sin_port = htons(atoi(argv[2]));
     server_add.sin_addr.s_addr = inet_addr(argv[1]);
 
     //Constructing socket name of the TCPD to send to
-    tcpd.sin_family = AF_INET;
-    tcpd.sin_port = htons(atoi(argv[4]));
-    tcpd.sin_addr.s_addr = inet_addr("127.0.0.1");
+    
 
     printf("Sending packets to TCPD...\n");
 
@@ -75,7 +75,7 @@ main(int argc, char const *argv[])
     memcpy(message.body,&size,sizeof(size));
 
     //Send the size of the file in the first datagram
-    if(sendto(sock,&message,sizeof(message),0, (struct sockaddr *)&tcpd, sizeof(tcpd)) < 0) {
+    if(SEND(sock,&message,sizeof(message),0) < 0) {
         perror("Error sending datagram message");
         exit(1);
     }
@@ -88,10 +88,11 @@ main(int argc, char const *argv[])
     memcpy(message.body,argv[3],20);
 
     //Send the name of the file in the next datagram
-    if(sendto(sock,&message,sizeof(message),0, (struct sockaddr *)&tcpd, sizeof(tcpd)) < 0) {
+    if(SEND(sock,&message,sizeof(message),0) < 0) {
         perror("Error sending datagram message");
         exit(1);
     }
+
     printf("Sending file: %s\n", message.body);
 
     //Reinitialize buffer to zero
@@ -115,7 +116,7 @@ main(int argc, char const *argv[])
         fread(message.body,1,sent_size,file);
 
         //Send the datagam to TCPD
-        int s = sendto(sock,&message,sizeof(message),0, (struct sockaddr *)&tcpd, sizeof(tcpd));
+        int s = SEND(sock,&message,sizeof(message),0);
 
         if (s < 0)
         {

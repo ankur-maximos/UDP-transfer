@@ -83,7 +83,7 @@ main(int argc, char const *argv[])
 
 		//Sending to troll
 		int s = sendto(troll_sock,&message,sizeof(message),0, (struct sockaddr *)&troll, sizeof(troll));
-
+		usleep(1000000);
         if (s < 0)
         {
             perror("Error sending datagram");
