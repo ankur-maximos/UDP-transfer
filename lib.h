@@ -44,6 +44,15 @@ int RECV(int s, void *buf, int len, int flags){
         perror("Error sending datagram message");
         exit(1);
     }
-    
 }
+
+int ACCEPT(int s, const void *buf, int len){
+	return 1;
+}
+
+
+int CONNECT(int s, const void *buf, int len){
+	return 1;
+}
+
 #endif
