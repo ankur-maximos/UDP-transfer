@@ -129,7 +129,7 @@ main(int argc, char const *argv[])
         if((size-sent)<sent_size){
             sent_size = size - sent;
         }
-        printf("Sent.. %d%\n",(sent*100)/size);
+        printf("Sent.. %d\n",(sent*100)/size);
 
         //Change buffer to zero
         bzero(message.body,1000);

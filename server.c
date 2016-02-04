@@ -133,7 +133,7 @@ main(int argc, char const *argv[])
         //Updating number of bytes received
         received += rec_size;
 
-        printf("Received.. %d%\n",(received*100)/size);
+        printf("Received.. %d\n",(received*100)/size);
 
         //Write the received content to the file
         fwrite(buff,1,rec,file);
