@@ -23,7 +23,8 @@ main(int argc, char const *argv[])
 	int sock, server_sock;								//Initial socket descriptors
 	struct sockaddr_in my_addr, server_addr;			//Structures for server and tcpd socket name setup
 	char buff[1000];									//Buffer for holding data
-
+	int size;
+	struct hostent *hp;
     //If there are more or less than 2 arguments show error
     //First argument: exec file         Second argument: local tcpd port number
     if (argc!=2){
@@ -67,11 +68,17 @@ main(int argc, char const *argv[])
 	//To hold the port number sent by ftps
 	char port[4];
 
+	if ((server_sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    {
+    	perror("Error openting datagram socket");
+    	exit(1);
+    }
+
 	//Always keep on listening
 	while(1) {
 
 		//Receiving from ftps for the port number
-		int rec = RECV(sock,&buff, 1000, 0);
+		int rec = recvfrom(sock,&buff, 1000, 0, (struct sockaddr *)&my_addr, &len);
 
 		if(rec<0){
 			perror("Error receiving datagram");
@@ -79,32 +86,56 @@ main(int argc, char const *argv[])
 		}
 
 		//Copying buffer to port
+
 		memcpy(port,buff,1000);
 
 		//Setting port number in struct
 		server_addr.sin_port = htons(atoi(port));
-
+		printf("%d\n", atoi(port));
 		printf("New server connected at port: %s\n", port);
 
 		printf("Sending all packets to the server...\n");
 
 		//Counter to count number of datagrams forwarded
 		int count = 0;
+		uint32_t no = htonl(45);
+		hp = gethostbyname("localhost");
+	    if(hp == 0) {
+		fprintf(stderr, "%s:unknown host\n", argv[1]);
+		exit(3);
+	    }
+	    bcopy((char *)hp->h_addr, (char *)&server_addr.sin_addr, hp->h_length);
 
+		
 		//Always keep on listening and sending
 		while(1) {
 
 			//Receiving from troll
-			int rec = RECV(sock,&message, sizeof(message), 0);
+			int rec = recvfrom(sock,&message, sizeof(message), 0, (struct sockaddr *)&my_addr, &len);
 
 			if(rec<0){
 				perror("Error receiving datagram");
 				exit(1);
 			}
-
+			
 			////Sending to ftps
-			printf("%d\n", message.body);
-			int s = SEND(server_sock,&message.body,sizeof(message.body),0);
+			memcpy(&size,message.body,sizeof(size));
+    		printf("Receiving file of size: %d\n", size);
+			int s;
+			if (count == 0){
+
+				s = sendto(server_sock,&size, sizeof(size) ,0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+			}
+			else if (count == 1){
+				char buf[20];
+				memcpy(buf, message.body, 20);
+				printf("%s\n", buf);
+				s = sendto(server_sock,&buf, sizeof(buf) ,0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+			}
+			else{
+				s = sendto(server_sock,&message.body, sizeof(message.body) ,0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+			}
+			
 
 	        if (s < 0)
 	        {

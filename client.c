@@ -58,7 +58,7 @@ main(int argc, char const *argv[])
     printf("Socket initialized \n");
 
     //Constructing socket name of the server to send to
-    choose_port(atoi(argv[4]));
+    choose_port(atoi(argv[4]), atoi(argv[2]));
     server_add.sin_family = htons(AF_INET);
     server_add.sin_port = htons(atoi(argv[2]));
     server_add.sin_addr.s_addr = inet_addr(argv[1]);

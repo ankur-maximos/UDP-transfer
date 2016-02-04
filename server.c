@@ -44,7 +44,7 @@ main(int argc, char const *argv[])
     my_addr.sin_port = htons(atoi(argv[1]));
 
     //Constructing socket name of the TCPD to send to
-    choose_port(atoi(argv[2]));
+    choose_port(atoi(argv[2]), atoi(argv[1]));
     
 
     //Binding socket name to socket
@@ -76,13 +76,17 @@ main(int argc, char const *argv[])
     int size;
 
     //Reading datagram to get the file size
-    if(RECV(sock, buff, 4, 0) < 0){
+    uint32_t size_temp= 0;
+    int fromlen = sizeof(my_addr);
+    
+    if(RECV(tcpd_sock, &size_temp, sizeof(size_temp), 0) < 0){
         perror("Error receiving datagram");
         exit(1);
     }
     
     //Copying the data into size variable
     memcpy(&size,buff,sizeof(size));
+    size = size_temp;
     printf("Receiving file of size: %d\n", size);
     
     //Setting the bytes used in buffer back to zero
@@ -109,7 +113,7 @@ main(int argc, char const *argv[])
     int received = 0;
 
     //Pointer to file that is being written
-    FILE *file = fopen(name,"wb");
+    FILE *file = fopen("output","wb");
 
     //This variable tells about number of bytes to receive and write to file
     int rec_size = 1000;
