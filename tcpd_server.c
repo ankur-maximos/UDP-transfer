@@ -71,7 +71,7 @@ main(int argc, char const *argv[])
 	while(1) {
 
 		//Receiving from ftps for the port number
-		int rec = recvfrom(sock,&buff, 1000, 0, (struct sockaddr *)&my_addr, &len);
+		int rec = RECV(sock,&buff, 1000, 0);
 
 		if(rec<0){
 			perror("Error receiving datagram");
@@ -95,7 +95,7 @@ main(int argc, char const *argv[])
 		while(1) {
 
 			//Receiving from troll
-			int rec = recvfrom(sock,&message, sizeof(message), 0, (struct sockaddr *)&my_addr, &len);
+			int rec = RECV(sock,&message, sizeof(message), 0);
 
 			if(rec<0){
 				perror("Error receiving datagram");
@@ -104,7 +104,7 @@ main(int argc, char const *argv[])
 
 			////Sending to ftps
 			printf("%d\n", message.body);
-			int s = sendto(server_sock,&message.body,sizeof(message.body),0, (struct sockaddr *)&server_addr, sizeof(server_addr));
+			int s = SEND(server_sock,&message.body,sizeof(message.body),0);
 
 	        if (s < 0)
 	        {

@@ -72,7 +72,7 @@ main(int argc, char const *argv[])
 	while(1) {
 
 		//Receiving from ftpc
-		int rec = recvfrom(sock,&message, sizeof(message), 0, (struct sockaddr *)&my_addr, &len);
+		int rec = RECV(sock,&message, sizeof(message), 0);
 
 		if(rec<0){
 			perror("Error receiving datagram");
@@ -82,7 +82,7 @@ main(int argc, char const *argv[])
 		printf("Received data, sending to troll --> %d\n",count);
 
 		//Sending to troll
-		int s = sendto(troll_sock,&message,sizeof(message),0, (struct sockaddr *)&troll, sizeof(troll));
+		int s = SEND(troll_sock,&message,sizeof(message),0);
 		usleep(1000000);
         if (s < 0)
         {
